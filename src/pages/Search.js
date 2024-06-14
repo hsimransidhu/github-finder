@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { options } from '../config'; // Importing API token and options for GitHub API
+import axios from 'axios'; 
 
 const Search = () => {
     const navigate = useNavigate();

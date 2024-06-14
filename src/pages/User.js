@@ -1,15 +1,14 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion'; // Importing motion for animations
-import { options } from '../config'; // Importing API token and options for GitHub API
 
 const User = () => {
     const navigate = useNavigate();
     const { username } = useParams();
     const [user, setUser] = useState(null);
     const [repos, setRepos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Function to navigate back to home page
     const goHome = () => {
@@ -19,38 +18,45 @@ const User = () => {
     const userUrl = `https://api.github.com/users/${username}`;
     const repoUrl = `https://api.github.com/users/${username}/repos`;
 
-        // Fetching user data from GitHub API
+    // Fetching user data from GitHub API
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const { data } = await axios.get(userUrl, options);
+                const { data } = await axios.get(userUrl);
+                console.log('User data:', data); // Debug log for user data
                 setUser(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
         };
 
-          // Fetching user repositories from GitHub API
+        // Fetching user repositories from GitHub API
         const fetchUserRepos = async () => {
             try {
-                const { data } = await axios.get(repoUrl, options);
+                const { data } = await axios.get(repoUrl);
+                console.log('Repo data:', data); // Debug log for repository data
                 setRepos(data);
             } catch (error) {
                 console.error('Error fetching user repositories:', error);
             }
         };
 
-        fetchUserData();
-        fetchUserRepos();
-    }, [username]);  // Dependency array to re-fetch data when username changes
+        const fetchData = async () => {
+            await fetchUserData();
+            await fetchUserRepos();
+            setLoading(false); // Set loading to false after fetching data
+        };
+
+        fetchData();
+    }, [username]); // Dependency array to re-fetch data when username changes
 
     const formatDate = (dateString) => {
         const options = { month: 'short', day: 'numeric', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('en-CA', options);
     };
 
-     // Displaying loading message until user data is fetched
-    if (!user) return <div>Loading...</div>;
+    // Displaying loading message until user data is fetched
+    if (loading) return <div>Loading...</div>;
 
     return (
         <motion.main
