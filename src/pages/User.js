@@ -9,6 +9,7 @@ const User = () => {
     const [user, setUser] = useState(null);
     const [repos, setRepos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Function to navigate back to home page
     const goHome = () => {
@@ -27,6 +28,7 @@ const User = () => {
                 setUser(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
+                setError('Failed to fetch user data');
             }
         };
 
@@ -38,6 +40,7 @@ const User = () => {
                 setRepos(data);
             } catch (error) {
                 console.error('Error fetching user repositories:', error);
+                setError('Failed to fetch user repositories');
             }
         };
 
@@ -57,6 +60,7 @@ const User = () => {
 
     // Displaying loading message until user data is fetched
     if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <motion.main
